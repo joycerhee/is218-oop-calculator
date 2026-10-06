@@ -37,10 +37,14 @@ def run() -> None:
         if command == "exit":
             break
         if command in operations:
-            a = float(input("First number: "))
-            b = float(input("Second number: "))
-            operation_class = operations[command]
-            calculation = operation_class(a, b)
+            try:
+                a = float(input("First number: "))
+                b = float(input("Second number: "))
+                operation_class = operations[command]
+                calculation = operation_class(a, b)
+            except ValueError:
+                print("Invalid number or result. Please use finite numbers.")
+                continue
             history.add(calculation)
             print(f"Result: {calculation.get_result():g}")
         elif command == "history":
