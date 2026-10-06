@@ -55,3 +55,11 @@ def test_same_request_gives_each_objects_own_answer():
     calculations = [Add(10, 5), Subtract(20, 7)]
     results = [calculation.get_result() for calculation in calculations]
     assert results == [15, 13]
+
+
+def test_my_three_calculations():
+    calculations = [Add(8, 9), Subtract(13, 3), Subtract(4, 12)]
+    results = []
+    for calculation in calculations:
+        results.append(calculation.get_result())
+    assert results == [17, 10, -8]
