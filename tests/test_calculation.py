@@ -3,57 +3,48 @@ import pytest
 from calculator.calculation import Add, Calculation, Subtract
 
 
-def test_add_returns_sum():
-    assert Add(10, 5).get_result() == 15
-
-
-def test_add_stores_operands():
+def test_add():
     calculation = Add(10, 5)
-    assert calculation.a == 10
-    assert calculation.b == 5
+    result = calculation.get_result()
+    assert result == 15
 
 
-def test_add_instances_are_independent():
-    first = Add(1, 2)
-    second = Add(10, 20)
-    assert first.get_result() == 3
-    assert second.get_result() == 30
+def test_instances_have_their_own_operands():
+    first = Add(10, 5)
+    second = Add(100, 50)
+    first.a = 20
+    assert first.get_result() == 25
+    assert second.a == 100
+    assert second.b == 50
+    assert second.get_result() == 150
 
 
-def test_add_handles_negative_and_zero():
-    assert Add(-2, 3).get_result() == 1
+def test_negative_operand():
+    assert Add(-10, 5).get_result() == -5
+
+
+def test_zero_operands():
     assert Add(0, 0).get_result() == 0
 
 
-def test_subtract_returns_difference():
+def test_subtract():
     assert Subtract(20, 7).get_result() == 13
 
 
-def test_subtract_can_go_negative():
+def test_subtract_can_return_a_negative_result():
     assert Subtract(5, 10).get_result() == -5
 
 
-def test_add_and_subtract_are_calculations():
-    assert isinstance(Add(1, 2), Calculation)
-    assert isinstance(Subtract(1, 2), Calculation)
-
-
-def test_calculation_cannot_be_created_directly():
+def test_calculation_is_abstract():
     with pytest.raises(TypeError):
-        Calculation(1, 2)
+        Calculation(10, 5)
 
 
-def test_subclass_without_get_result_cannot_be_created():
-    class Incomplete(Calculation):
-        pass
-
-    with pytest.raises(TypeError):
-        Incomplete(1, 2)
-
-
-def test_same_request_gives_each_objects_own_answer():
+def test_polymorphism():
     calculations = [Add(10, 5), Subtract(20, 7)]
-    results = [calculation.get_result() for calculation in calculations]
+    results = []
+    for calculation in calculations:
+        results.append(calculation.get_result())
     assert results == [15, 13]
 
 
@@ -63,3 +54,10 @@ def test_my_three_calculations():
     for calculation in calculations:
         results.append(calculation.get_result())
     assert results == [17, 10, -8]
+
+
+def test_my_add_keeps_its_operands():
+    calculation = Add(7, -5)
+    assert calculation.get_result() == 2
+    assert calculation.a == 7
+    assert calculation.b == -5

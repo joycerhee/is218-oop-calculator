@@ -6,12 +6,14 @@ class History:
         self._calculations: list[Calculation] = []
 
     def add(self, calculation: Calculation) -> None:
+        if not isinstance(calculation, Calculation):
+            raise TypeError("History accepts Calculation objects only.")
         self._calculations.append(calculation)
 
-    def get_all(self) -> list[Calculation]:
-        return list(self._calculations)
+    def get_history(self) -> list[Calculation]:
+        return self._calculations.copy()
 
     def remove(self, index: int) -> Calculation:
-        if not 0 <= index < len(self._calculations):
-            raise IndexError("No history entry at that position.")
+        if index < 0 or index >= len(self._calculations):
+            raise IndexError("Calculation does not exist.")
         return self._calculations.pop(index)

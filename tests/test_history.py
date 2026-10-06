@@ -4,41 +4,65 @@ from calculator.calculation import Add, Subtract
 from calculator.history import History
 
 
-def test_new_history_is_empty():
-    assert History().get_all() == []
+def test_empty_history():
+    assert History().get_history() == []
 
 
-def test_add_keeps_calculations_in_order():
+def test_mixed_calculations_keep_their_order():
     history = History()
     first = Add(10, 5)
     second = Subtract(20, 7)
     history.add(first)
     history.add(second)
-    assert history.get_all() == [first, second]
+    assert history.get_history() == [first, second]
 
 
-def test_get_all_returns_a_copy():
+def test_returned_list_is_a_copy():
     history = History()
-    history.add(Add(10, 5))
-    returned = history.get_all()
-    returned.clear()
-    assert len(history.get_all()) == 1
+    calculation = Add(10, 5)
+    history.add(calculation)
+    snapshot = history.get_history()
+    snapshot.clear()
+    assert history.get_history() == [calculation]
 
 
-def test_remove_returns_the_entry_and_keeps_the_rest():
+def test_remove_returns_the_selected_object():
     history = History()
     first = Add(10, 5)
     second = Subtract(20, 7)
     history.add(first)
     history.add(second)
     assert history.remove(0) is first
-    assert history.get_all() == [second]
+    assert history.get_history() == [second]
+    assert history.remove(0) is second
+    assert history.get_history() == []
 
 
-def test_remove_rejects_positions_outside_the_list():
+def test_invalid_removal_preserves_entries():
     history = History()
-    history.add(Add(10, 5))
-    for index in [1, 5, -1]:
+    calculation = Add(10, 5)
+    history.add(calculation)
+    for invalid_index in [-1, 1, 99]:
         with pytest.raises(IndexError):
-            history.remove(index)
-    assert len(history.get_all()) == 1
+            history.remove(invalid_index)
+        assert history.get_history() == [calculation]
+
+
+def test_histories_are_independent():
+    first = History()
+    second = History()
+    first.add(Add(10, 5))
+    assert second.get_history() == []
+
+
+def test_reject_non_calculation():
+    history = History()
+    with pytest.raises(TypeError):
+        history.add("not a calculation")
+    assert history.get_history() == []
+
+def test_remove_from_empty_history():
+    history = History()
+    with pytest.raises(IndexError):
+        history.remove(0)
+    assert history.get_history() == []
