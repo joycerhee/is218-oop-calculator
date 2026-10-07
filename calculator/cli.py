@@ -52,9 +52,15 @@ def run() -> None:
         elif command == "remove":
             show_history(history)
             if history.get_history():
-                number = int(input("Enter calculation number to remove: "))
-                removed = history.remove(number - 1)
-                print(f"Removed: {describe(removed)}")
+                try:
+                    number = int(input("Enter calculation number to remove: "))
+                    removed = history.remove(number - 1)
+                except ValueError:
+                    print("Please enter a whole calculation number.")
+                except IndexError:
+                    print("Calculation does not exist.")
+                else:
+                    print(f"Removed: {describe(removed)}")
         elif command == "help":
             print(HELP)
         else:
